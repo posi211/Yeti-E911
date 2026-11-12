@@ -6,6 +6,7 @@
 //   2. CDR : every minute reads the CDR DB for finished calls -> permanent record, catches anything live missed.
 const { Pool } = require('pg');
 const L = require('./lib');
+const M = require('./metrics');
 const YETI_URL = (process.env.YETI_API_URL || '').replace(/\/$/, '');
 const http = require('http'), https = require('https');
 // Node fetch refuses port 6666 ("bad port"), so talk to the Yeti with the plain http client.
@@ -112,8 +113,9 @@ async function liveLoop() {
     try {
       await pollLive();
       if (fails >= 30 && blindAlertSent) await L.sendMail(L.adminEmails(), '911 watcher recovered', '<p>The Yeti 911 watcher can see the Yeti again.</p>');
-      fails = 0; blindAlertSent = false;
+      fails = 0; blindAlertSent = false; M.ok('live');
     } catch (e) {
+      M.fail('live');
       console.error('live', e.message, e.cause && (e.cause.code || e.cause.message));
       if (++fails === 30 && !blindAlertSent) {
         blindAlertSent = true;
@@ -125,12 +127,12 @@ async function liveLoop() {
 }
 async function cdrLoop() {
   for (;;) {
-    try { await pollCdr(); } catch (e) { console.error('cdr', e.message); }
+    try { await pollCdr(); M.ok('cdr'); } catch (e) { M.fail('cdr'); console.error('cdr', e.message); }
     await new Promise(r => setTimeout(r, CDR_MS));
   }
 }
 
 if (require.main === module) {
   for (const k of ['E911_DB_URL', 'CDR_DB_URL', 'YETI_API_URL', 'YETI_API_USER', 'YETI_API_PASS']) if (!process.env[k]) { console.error('Missing required setting ' + k + ' (see .env.example)'); process.exit(1); }
-  liveLoop(); cdrLoop(); console.log('yeti-e911 watcher running, yeti at', YETI_URL); }
+  M.start(); liveLoop(); cdrLoop(); console.log('yeti-e911 watcher running, yeti at', YETI_URL); }
 module.exports = { pollLive, pollCdr };

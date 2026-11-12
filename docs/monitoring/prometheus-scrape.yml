@@ -1,0 +1,10 @@
+# Add under scrape_configs: in prometheus.yml
+  - job_name: yeti-e911-watcher
+    scrape_interval: 15s
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['E911_HOST_INTERNAL_IP:9396']
+    # If you set METRICS_TOKEN on the watcher, also add:
+    # authorization:
+    #   type: Bearer
+    #   credentials: PASTE_TOKEN_HERE

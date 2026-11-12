@@ -1,0 +1,72 @@
+# Prometheus alert rules for Yeti-E911. Check with:  promtool check rules e911-alerts.rules.yml
+groups:
+  - name: e911
+    rules:
+      - alert: E911WatcherDown
+        expr: up{job="yeti-e911-watcher"} == 0
+        for: 2m
+        labels: {severity: critical}
+        annotations:
+          summary: "Yeti-E911 watcher is not answering"
+          description: "Prometheus cannot reach the watcher's /metrics. If the watcher is stopped, 911 calls are NOT being detected or alerted. Check: pm2 list; pm2 logs yeti-e911-watcher."
+
+      - alert: E911LivePollStale
+        expr: time() - e911_live_poll_last_success_timestamp_seconds > 120
+        for: 1m
+        labels: {severity: critical}
+        annotations:
+          summary: "Yeti-E911 cannot see live Yeti calls"
+          description: "No successful live poll of the Yeti for over 2 minutes. 911 alerts will only come from the slower CDR check (late). Check Yeti API credentials (401?), address and port 6666."
+
+      - alert: E911LivePollFailing
+        expr: e911_live_poll_consecutive_failures >= 15
+        for: 30s
+        labels: {severity: warning}
+        annotations:
+          summary: "Yeti-E911 live polling is failing repeatedly"
+          description: "{{ $value }} live polls in a row failed. See pm2 logs for the error text (for example 'yeti 401')."
+
+      - alert: E911CdrPollStale
+        expr: time() - e911_cdr_poll_last_success_timestamp_seconds > 300
+        for: 2m
+        labels: {severity: critical}
+        annotations:
+          summary: "Yeti-E911 cannot read the CDR database"
+          description: "No successful CDR poll for over 5 minutes. Calls missed by the live poll will not be caught. Check CDR_DB_URL, the read-only role and network access."
+
+      - alert: E911DatabaseDown
+        expr: e911_db_up == 0
+        for: 1m
+        labels: {severity: critical}
+        annotations:
+          summary: "Yeti-E911 cannot reach its own database"
+          description: "The E911 Postgres database is not answering. Calls cannot be recorded or alerted."
+
+      - alert: E911AlertEmailFailed
+        expr: e911_notify_failed_24h > 0
+        labels: {severity: critical}
+        annotations:
+          summary: "A real 911 call's alert email did not go out"
+          description: "{{ $value }} real 911 call(s) in the last 24 hours have no successful alert email. Check the call's Alert Email column and the SMTP2GO account. Clears 24 hours after the call."
+
+      - alert: E911StaffCopyFailed
+        expr: e911_staff_copy_failed_24h > 0
+        labels: {severity: warning}
+        annotations:
+          summary: "A staff copy of a 911 alert failed"
+          description: "The customer email was sent but the separate staff copy failed for {{ $value }} call(s) in the last 24 hours."
+
+      - alert: E911NoElinCall
+        expr: e911_noelin_calls_24h > 0
+        labels: {severity: warning}
+        annotations:
+          summary: "Real 911 call with no ELIN address on file"
+          description: "{{ $value }} real 911 call(s) in the last 24 hours came from a number with no ELIN address. Add the address in Directory."
+
+      - alert: E911NoRecentTestCall
+        expr: time() - e911_last_test_call_timestamp_seconds > 8 * 86400
+        for: 10m
+        labels: {severity: warning}
+        annotations:
+          summary: "No 933 test call seen for over 8 days"
+          description: "Place a 933 test call from a monitored number weekly to prove the whole chain (Yeti, watcher, database, email) still works."

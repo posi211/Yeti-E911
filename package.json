@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "test": "node test/classify.test.js",
-    "test:all": "node test/classify.test.js && node test/e2e.js && node test/events.js"
+    "test:all": "node test/classify.test.js && node test/e2e.js && node test/events.js && node test/metrics.js"
   },
   "dependencies": {
     "exceljs": "^4.4.0",

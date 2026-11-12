@@ -20,6 +20,7 @@ Yeti-E911 watches your Yeti for calls to 911 (and the 933 test number), records 
 - **NO ELIN MATCH alerts.** A real 911 call from a number with no address on file (or no number on file at all) is sent as a high-priority urgent alert, shown in a dashboard banner, and optionally priced with `NO_ELIN_FEE` if your carrier charges for such calls.
 - **Customer portal.** Customers sign in to see only their own numbers and calls, and manage their own notification emails.
 - **Admin separation.** Admin accounts can sign in only through the internal address of your reverse proxy, not from the internet.
+- **Monitoring.** Optional Prometheus metrics, alert rules and a Grafana dashboard so a stalled watcher or failed alert email is noticed immediately (see [docs/monitoring](docs/monitoring/README.md)).
 - **Admin tools.** User management, a login log, preview and test-send for alerts, a clock, and configurable call patterns.
 
 ## Screenshots
