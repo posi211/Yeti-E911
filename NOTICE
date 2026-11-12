@@ -1,0 +1,8 @@
+Yeti-E911
+Copyright 2026 Yeti-E911 contributors
+Licensed under the Apache License, Version 2.0.
+
+Third-party software included or used:
+- Bootstrap 5.3.3 (public/vendor/), MIT License, Copyright 2011-2024 The Bootstrap Authors.
+- Runtime dependencies installed by npm (express, pg, exceljs and their dependencies), each under its own license.
+- Yeti Switch is a separate project and is not included.

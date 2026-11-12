@@ -1,0 +1,27 @@
+{
+  "name": "yeti-e911",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "node test/classify.test.js",
+    "test:all": "node test/classify.test.js && node test/e2e.js && node test/events.js"
+  },
+  "dependencies": {
+    "exceljs": "^4.4.0",
+    "express": "^4.19.2",
+    "pg": "^8.11.5"
+  },
+  "description": "911 call detection and email alerting for Yeti Switch, with a multi-customer ELIN portal",
+  "license": "Apache-2.0",
+  "keywords": [
+    "yeti-switch",
+    "voip",
+    "sip",
+    "e911",
+    "911",
+    "sbc",
+    "telecom"
+  ],
+  "engines": {
+    "node": ">=20.6"
+  }
+}

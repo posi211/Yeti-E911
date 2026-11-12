@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>__BRAND__ Portal</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 16 16%27%3E%3Ccircle cx=%278%27 cy=%278%27 r=%277%27 fill=%27%23c00%27/%3E%3C/svg%3E">
+<link href="/vendor/bootstrap.min.css" rel="stylesheet">
+<style>
+  body { font-family: 'Roboto', system-ui, -apple-system, 'Segoe UI', sans-serif; transition: background-color .25s, color .25s; }
+  [data-bs-theme="dark"] body  { background-color: #0f111a; color: #e2e8f0; }
+  [data-bs-theme="light"] body { background-color: #f8fafc; color: #0f172a; }
+  .mono { font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; }
+  [data-bs-theme="dark"]  .navbar { background-color: #161925 !important; border-bottom: 1px solid #2d3142; }
+  [data-bs-theme="light"] .navbar { background-color: #fff !important; border-bottom: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
+  .table-container, .control-panel { border-radius: 8px; }
+  [data-bs-theme="dark"]  .table-container, [data-bs-theme="dark"]  .control-panel { background-color: #161925; border: 1px solid #2d3142; }
+  [data-bs-theme="light"] .table-container, [data-bs-theme="light"] .control-panel { background-color: #fff; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,.05); }
+  [data-bs-theme="dark"]  .table-light-th th { background-color: #1e2235 !important; color: #94a3b8 !important; border-bottom: 2px solid #2d3142; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+  [data-bs-theme="light"] .table-light-th th { background-color: #f1f5f9 !important; color: #475569 !important; border-bottom: 2px solid #cbd5e1; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+  .stat-card { border-radius: 8px; padding: 16px 20px; }
+  [data-bs-theme="dark"]  .stat-card { background-color: #1e2235; border: 1px solid #2d3142; }
+  [data-bs-theme="light"] .stat-card { background-color: #f1f5f9; border: 1px solid #e2e8f0; }
+  .stat-number { font-size: 28px; font-weight: 700; font-family: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace; }
+  .stat-label { text-transform: uppercase; letter-spacing: 1px; }
+  .badge-911 { background-color: #7f1d1d; color: #fca5a5; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; }
+  .badge-test { background-color: #374151; color: #d1d5db; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; }
+  .facility-badge { background-color: #1e3a5f; color: #93c5fd; padding: 2px 8px; border-radius: 4px; font-size: 11px; }
+  [data-bs-theme="light"] .facility-badge { background-color: #dbeafe; color: #1e40af; }
+  .unk { background: #92400e; color: #fde68a; padding: 1px 6px; border-radius: 4px; font-size: 11px; }
+  .emergency-flash { border-left: 4px solid #ef4444 !important; background-color: rgba(239,68,68,.06); }
+  .status-active { color: #10b981; font-weight: bold; }
+  .ev-initiated { background-color: #f59e0b; color: #000; font-weight: bold; }
+  .ev-answered  { background-color: #3b82f6; color: #fff; font-weight: bold; }
+  .ev-hangup    { background-color: #ef4444; color: #fff; }
+  #auth-gate { position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; }
+  [data-bs-theme="dark"]  #auth-gate { background-color: #0f111a; }
+  [data-bs-theme="light"] #auth-gate { background-color: #f8fafc; }
+  .login-box { max-width: 420px; width: 100%; padding: 36px; border-radius: 12px; }
+  [data-bs-theme="dark"]  .login-box { background-color: #161925; border: 1px solid #2d3142; }
+  [data-bs-theme="light"] .login-box { background-color: #fff; border: 1px solid #e2e8f0; }
+  #live-indicator { display: inline-block; width: 10px; height: 10px; background-color: #64748b; border-radius: 50%; margin-right: 5px; }
+  .blinking { animation: blink 1.5s infinite; background-color: #10b981 !important; }
+  @keyframes blink { 0% { opacity: .2; } 50% { opacity: 1; } 100% { opacity: .2; } }
+  .customer-card { border-radius: 8px; padding: 14px 16px; width: 340px; max-width: 100%; }
+  [data-bs-theme="dark"]  .customer-card { background-color: #1e2235; border: 1px solid #2d3142; }
+  [data-bs-theme="light"] .customer-card { background-color: #f1f5f9; border: 1px solid #e2e8f0; }
+  .remove-btn { cursor: pointer; color: #ef4444; font-weight: bold; background: none; border: none; padding: 0; line-height: 1; }
+  .saved-msg { color: #10b981; font-size: 11px; font-weight: bold; min-height: 14px; }
+  .hide { display: none !important; }
+  td, th { vertical-align: middle; }
+</style>
+</head>
+<body>
+
+<!-- ============ SIGN-IN ============ -->
+<div id="auth-gate" class="hide">
+  <div class="login-box text-center">
+    <div style="font-size:40px;margin-bottom:10px">&#128272;</div>
+    <h4 class="fw-bold mb-1 text-primary">__BRAND__ Portal</h4>
+    <p class="text-muted small mb-4">Identity verification required</p>
+    <div id="login-err" class="alert alert-danger d-none small text-start py-2"></div>
+    <form id="login-form">
+      <div class="mb-3 text-start">
+        <label class="form-label small text-secondary fw-bold">Account name / username</label>
+        <input type="text" id="u" class="form-control" required autocomplete="username" autofocus>
+      </div>
+      <div class="mb-4 text-start">
+        <label class="form-label small text-secondary fw-bold">Password</label>
+        <input type="password" id="p" class="form-control" required autocomplete="current-password">
+      </div>
+      <button type="submit" class="btn btn-primary w-100 fw-bold py-2">Authenticate</button>
+    </form>
+    <p class="text-muted small mt-4 mb-0">__BRAND__ &mdash; E911 Monitoring</p>
+  </div>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="app" class="hide">
+  <nav class="navbar navbar-dark mb-4 py-3">
+    <div class="container-fluid px-4">
+      <span class="navbar-brand mb-0 h1 fw-bold text-body" id="brand"></span>
+      <div class="d-flex align-items-center gap-2 flex-wrap">
+        <span id="navbtns" class="d-flex gap-2 flex-wrap"></span>
+        <div id="clock" class="text-end lh-sm me-2 text-nowrap" title="Your computer's clock; UTC shown below"><div class="mono fw-bold" id="clk-local"></div><div class="mono text-muted" style="font-size:11px" id="clk-utc"></div></div>
+        <div class="form-check form-switch m-0 ms-2">
+          <input class="form-check-input" type="checkbox" id="themesw" checked>
+          <label class="form-check-label small text-secondary fw-bold" for="themesw" id="themelbl">Dark</label>
+        </div>
+        <span class="text-body small ms-1"><span id="live-indicator"></span>Live</span>
+        <small class="text-secondary ms-1" id="who"></small>
+        <button class="btn btn-outline-secondary btn-sm px-3" id="out">&#128274; Sign out</button>
+      </div>
+    </div>
+  </nav>
+  <div class="container-fluid px-4" id="main"></div>
+  <div class="text-center text-muted small py-4">__BRAND__ &mdash; E911 Monitoring System</div>
+</div>
+
+<!-- ============ MODALS ============ -->
+<div class="modal fade" id="entryModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title fw-bold" id="entry-title">Add Facility Route</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <form id="entry-form"><div class="modal-body">
+      <div class="mb-3"><label class="form-label small text-secondary fw-bold">Customer Account</label><select id="m-cust" class="form-select" required></select></div>
+      <div class="mb-3"><label class="form-label small text-secondary fw-bold">Facility Name</label><input id="m-fac" class="form-control"></div>
+      <div class="mb-3"><label class="form-label small text-secondary fw-bold">Phone Number (DID, 10 digits)</label><input id="m-did" class="form-control mono" placeholder="9705550101" required></div>
+      <div class="mb-3"><label class="form-label small text-secondary fw-bold">ELIN Address</label><input id="m-a1" class="form-control" placeholder="Street address (leave empty if not known yet — calls will raise a NO ELIN alert)"><input id="m-a2" class="form-control mt-2" placeholder="Suite / floor / room"></div>
+      <div class="row g-2 mb-3"><div class="col-6"><input id="m-city" class="form-control" placeholder="City"></div><div class="col-2"><input id="m-st" class="form-control" placeholder="ST" maxlength="2"></div><div class="col-4"><input id="m-zip" class="form-control" placeholder="ZIP"></div></div>
+      <div class="mb-3"><label class="form-label small text-secondary fw-bold">Extra Notification Email(s) for this number</label><input id="m-em" class="form-control" placeholder="manager@hotel.com, security@hotel.com"><div class="form-text">Added to the customer's alert emails. Separate with commas.</div></div>
+      <div class="mb-1"><label class="form-label small text-secondary fw-bold">Notes</label><input id="m-notes" class="form-control"></div>
+      <div id="entry-err" class="alert alert-danger d-none mt-3 mb-0 py-2 small"></div>
+    </div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-success fw-bold">Save</button></div></form>
+  </div></div>
+</div>
+
+<div class="modal fade" id="importModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title fw-bold text-primary">&#128229; Import from Excel / CSV</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body">
+      <div class="mb-3"><label class="form-label small text-secondary fw-bold">What are you importing?</label>
+        <select id="imp-kind" class="form-select"><option value="dids">Facility routes (DID + ELIN address)</option><option value="customers">Customers (name + alert emails)</option></select></div>
+      <div class="mb-3"><label class="form-label small text-secondary fw-bold">Select file (.xlsx or .csv)</label><input type="file" id="imp-file" class="form-control" accept=".xlsx,.csv"></div>
+      <div class="small text-muted mb-3" id="imp-cols"></div>
+      <div class="form-check form-switch mb-3" id="imp-create-wrap"><input class="form-check-input" type="checkbox" id="imp-create"><label class="form-check-label fw-bold text-warning" for="imp-create">Create customers that are not listed yet</label>
+        <div class="text-muted small">Numbers that already exist are updated with the file's values.</div></div>
+      <div id="imp-result" class="alert d-none mb-0 small" style="white-space:pre-wrap"></div>
+    </div>
+    <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button><button type="button" class="btn btn-outline-secondary fw-bold" id="imp-template">&#128203; Download Template</button><button type="button" class="btn btn-primary fw-bold" id="imp-go" disabled>Execute Import</button></div>
+  </div></div>
+</div>
+
+<div class="modal fade" id="pvModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title fw-bold">Alert email preview</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body"><div class="small mb-3" id="pv-meta"></div><iframe id="pv-frame" sandbox="" style="width:100%;height:340px;border:1px solid #2d3142;border-radius:6px;background:#fff"></iframe></div>
+  </div></div>
+</div>
+
+<script src="/vendor/bootstrap.bundle.min.js"></script>
+<script>
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const E = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+let me = null, tab = 'dash', timer = null, customers = [], dids = [];
+
+async function api(p, o = {}) {
+  const raw = o.body instanceof ArrayBuffer || typeof o.body === 'string';
+  const r = await fetch('/api/' + p, { ...o, headers: { 'Content-Type': 'application/json', ...(o.headers || {}) }, body: o.body && !raw ? JSON.stringify(o.body) : o.body });
+  if (r.status === 401 && p !== 'login') { gate(); throw new Error('login'); }
+  const t = await r.text(); let j; try { j = JSON.parse(t) } catch { j = t }
+  if (!r.ok) throw new Error((j && j.error) || r.status);
+  return j;
+}
+const fileBody = async f => /\.xlsx$/i.test(f.name)
+  ? { headers: { 'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }, body: await f.arrayBuffer() }
+  : { headers: { 'Content-Type': 'text/csv' }, body: await f.text() };
+const qs = o => Object.entries(o).filter(e => e[1]).map(e => e[0] + '=' + encodeURIComponent(e[1])).join('&');
+const dt = v => { const d = new Date(v); return isNaN(d) ? '' : `<div class="fw-bold">${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div><div class="text-muted small mono">${d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</div>` };
+const addr = r => r.elin_address1 ? E([[r.elin_address1, r.elin_address2].filter(Boolean).join(' '), [r.city, r.state, r.zip].filter(Boolean).join(' ')].filter(Boolean).join(', ')) : '';
+const statCard = (label, id, cls) => `<div class="col-6 col-md-3"><div class="stat-card"><div class="text-muted small fw-bold mb-1 stat-label">${label}</div><div class="stat-number ${cls}" id="${id}">&ndash;</div></div></div>`;
+
+// ---------- clock ----------
+function tick() {
+  const n = new Date();
+  $('#clk-local').textContent = n.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) + '  ' + n.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit', timeZoneName: 'short' });
+  $('#clk-utc').textContent = n.toLocaleTimeString('en-GB', { timeZone: 'UTC', hour12: false }) + ' UTC';
+}
+tick(); setInterval(tick, 1000);
+
+// ---------- theme ----------
+function setTheme(dark) {
+  document.documentElement.setAttribute('data-bs-theme', dark ? 'dark' : 'light');
+  $('#themesw').checked = dark; $('#themelbl').textContent = dark ? 'Dark' : 'Light';
+  try { localStorage.setItem('e911-theme', dark ? 'dark' : 'light') } catch {}
+}
+$('#themesw').onchange = e => setTheme(e.target.checked);
+try { if (localStorage.getItem('e911-theme') === 'light') setTheme(false) } catch {}
+
+// ---------- sign in / out ----------
+function gate() { me = null; clearInterval(timer); $('#auth-gate').classList.remove('hide'); $('#app').classList.add('hide'); }
+$('#login-form').onsubmit = async e => {
+  e.preventDefault(); const box = $('#login-err'); box.classList.add('d-none');
+  try { await api('login', { method: 'POST', body: { username: $('#u').value.trim(), password: $('#p').value } }); $('#p').value = ''; init(); }
+  catch (err) { box.textContent = err.message === 'bad login' ? 'Invalid credentials — access denied.' : err.message; box.classList.remove('d-none'); }
+};
+$('#out').onclick = async () => { try { await api('logout', { method: 'POST' }) } catch {} gate(); };
+
+async function init() {
+  try { me = await api('me'); } catch { gate(); return; }
+  const adm = me.role === 'admin';
+  customers = adm ? await api('customers') : [];
+  $('#auth-gate').classList.add('hide'); $('#app').classList.remove('hide');
+  $('#who').textContent = me.username;
+  $('#brand').innerHTML = adm ? '__BRAND__ Dashboard <span class="fs-6 text-muted mono fw-normal ms-2">(Yeti)</span>'
+    : '&#128680; Emergency Alert Portal <span class="badge bg-danger ms-2 fs-6">' + E(me.username) + '</span>';
+  $('#navbtns').innerHTML = adm
+    ? [['dash', '&#128680; Dashboard', 'primary'], ['dir', '&#128194; Directory', 'primary'], ['logins', '&#128274; Login Logs', 'success'], ['settings', '&#9881; Numbers &amp; Users', 'warning']]
+        .map(t => `<button class="btn btn-sm fw-bold px-3" data-t="${t[0]}" data-c="${t[2]}">${t[1]}</button>`).join('')
+    : '<button class="btn btn-sm btn-outline-info" data-t="dash" data-c="info">&#8635; Refresh</button>';
+  go(adm ? tab : 'dash');
+}
+$('#navbtns').onclick = e => { const b = e.target.closest('[data-t]'); if (b) go(b.dataset.t); };
+function go(t) {
+  tab = t; clearInterval(timer);
+  $$('#navbtns [data-t]').forEach(b => { const on = b.dataset.t === t && me.role === 'admin'; b.className = 'btn btn-sm fw-bold px-3 ' + (on ? 'btn-' + b.dataset.c : 'btn-outline-' + b.dataset.c); });
+  ({ dash, dir, logins, settings })[t]().catch(err => { if (err.message !== 'login') $('#main').innerHTML = `<div class="alert alert-danger">${E(err.message)}</div>`; });
+}
+const live = ok => $('#live-indicator').classList.toggle('blinking', ok);
+
+// =====================================================================
+// DASHBOARD  (admin: all customers / customer: only their own)
+// =====================================================================
+async function dash() {
+  const adm = me.role === 'admin';
+  let myNotify = null;
+  if (!adm) [dids, myNotify] = await Promise.all([api('dids'), api('my/notify')]);
+  $('#main').innerHTML = `
+  <div class="row g-3 mb-4">${adm
+    ? statCard('Total Calls Captured', 's1', 'text-primary') + statCard('Live Now', 's2', 'text-success') + statCard('Real 911 Calls', 's3', 'text-danger') + statCard('Showing', 's4', 'text-warning')
+    : statCard('Total Emergency Calls', 's1', 'text-danger') + statCard('Last 30 Days', 's2', 'text-warning') + statCard('Registered Numbers', 's3', 'text-info') + statCard('Most Recent Alert', 's4', 'text-success')}</div>
+
+  <div class="control-panel p-3 mb-4"><div class="row g-3 align-items-end">
+    <div class="col-12 col-md-3"><label class="form-label small text-secondary fw-bold">Search</label><input id="fq" class="form-control" placeholder="Number, facility, address, call ID..."></div>
+    <div class="col-6 col-md-2"><label class="form-label small text-secondary fw-bold">Number Dialed</label><select id="fc" class="form-select"><option value="">All calls</option><option value="real">Real 911</option><option value="test">Test calls (933 etc.)</option></select></div>
+    <div class="col-6 col-md-2"><label class="form-label small text-secondary fw-bold">${adm ? 'Customer' : 'Facility'}</label><select id="fu" class="form-select"><option value="">${adm ? 'All customers' : 'All facilities'}</option>${adm
+      ? customers.map(c => `<option value="${c.id}">${E(c.name)}</option>`).join('')
+      : [...new Set(dids.map(d => d.facility).filter(Boolean))].map(f => `<option value="${E(f)}">${E(f)}</option>`).join('')}</select></div>
+    <div class="col-6 col-md-1"><label class="form-label small text-secondary fw-bold">From</label><input type="date" id="ff" class="form-control"></div>
+    <div class="col-6 col-md-1"><label class="form-label small text-secondary fw-bold">To</label><input type="date" id="ft" class="form-control"></div>
+    <div class="col-6 col-md-1"><label class="form-label small text-secondary fw-bold">Rows</label><select id="fl" class="form-select"><option>100</option><option selected>500</option><option>2000</option><option>10000</option></select></div>
+    <div class="col-6 col-md-2 text-md-end"><button class="btn btn-outline-info btn-sm fw-bold" id="ex">&#128228; Export ${adm ? '' : 'My '}Excel</button> <button class="btn btn-outline-secondary btn-sm" id="ex2">CSV</button></div>
+  </div></div>
+
+  ${adm ? '<div id="noelin"></div>' : ''}
+  <div class="control-panel p-3 mb-4" style="border-left:4px solid #ef4444">
+    <div class="d-flex justify-content-between align-items-center mb-2"><h6 class="fw-bold mb-0 text-danger stat-label">&#128680; Recent Emergency Alerts</h6><span class="text-muted small" id="rc"></span></div>
+    <div id="recent"><span class="text-muted small">Loading...</span></div>
+  </div>
+
+  ${adm ? '' : `<div class="control-panel p-3 mb-4"><h6 class="fw-bold mb-3 text-secondary stat-label">Registered Facilities</h6><div class="d-flex flex-wrap gap-2">${dids.length ? dids.map(d => `<div class="facility-badge d-inline-flex align-items-center gap-2" style="padding:6px 12px;font-size:13px"><b>${E(d.facility || d.customer)}</b><span class="mono" style="font-size:11px;opacity:.8">${E(d.did)}</span></div>`).join('') : '<span class="text-muted small">No facilities registered under this account.</span>'}</div></div>`}
+
+  ${adm ? '' : `<div class="control-panel p-3 mb-4" id="notif">
+    <h6 class="fw-bold mb-1 text-secondary stat-label">&#9993; Notification Emails</h6>
+    <p class="text-muted small mb-3">Who gets an email when a real 911 call is made from your numbers. Changes take effect immediately and __BRAND__ is notified of them.</p>
+    <label class="form-label small text-secondary fw-bold">Every 911 call from your account</label>
+    <div class="d-flex gap-2 mb-1 flex-wrap"><input id="n-acct" class="form-control" style="max-width:640px" placeholder="name@company.com, name2@company.com" value="${E((myNotify.notify_emails || []).join(', '))}"><button class="btn btn-success fw-bold" id="n-acct-go">Save</button></div>
+    <div class="saved-msg mb-3" id="n-acct-m"></div>
+    <label class="form-label small text-secondary fw-bold">Extra people for a specific number</label>
+    <div class="table-responsive"><table class="table align-middle text-body mb-2"><thead class="table-light-th"><tr><th>Facility</th><th>Number</th><th>Extra emails</th><th></th></tr></thead><tbody>${dids.map(d => `<tr>
+      <td>${E(d.facility || d.customer)}</td><td class="mono text-info">${E(d.did)}</td>
+      <td><input class="form-control form-control-sm n-did" data-id="${d.id}" style="min-width:280px" placeholder="(none)" value="${E((d.notify_emails || '').split(';').join(', '))}"></td>
+      <td class="text-nowrap"><button class="btn btn-sm btn-outline-success" data-save="${d.id}">Save</button> <span class="saved-msg" id="n-m-${d.id}"></span></td></tr>`).join('')}</tbody></table></div>
+    <div class="d-flex align-items-center gap-3 flex-wrap"><button class="btn btn-outline-info btn-sm fw-bold" id="n-test">Send a test email</button><span class="saved-msg" id="n-test-m"></span><span class="text-muted small">A test is clearly marked and does not mean a call was made. To change an address on file or add a number, contact __BRAND__.</span></div>
+  </div>`}
+
+  <div class="table-container p-4">
+    <div class="d-flex justify-content-between align-items-center mb-3"><h5 class="m-0 fw-bold">${adm ? '911 Call Stream' : 'Emergency Call History'}</h5><span class="badge bg-dark border border-secondary text-secondary mono py-2 px-3" id="cnt">0 Records</span></div>
+    <div class="table-responsive"><table class="table table-hover align-middle text-body"><thead class="table-light-th"><tr>
+      <th>Date &amp; Time</th><th>Type</th>${adm ? '<th>Customer</th>' : ''}<th>Facility</th><th>Caller ID</th><th>Dialed</th><th>Dispatchable Address</th><th>Length</th>${adm ? '<th>Alert Email</th>' : ''}<th>Session ID</th>
+    </tr></thead><tbody id="rows" class="mono"><tr><td colspan="10" class="text-center text-muted py-5">Loading...</td></tr></tbody></table></div>
+  </div>
+  ${adm ? `<div class="table-container p-4 mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2"><h5 class="m-0 fw-bold">911 Call Event Stream <span class="fs-6 text-muted mono fw-normal ms-2">(Yeti)</span></h5>
+      <select id="evt" class="form-select form-select-sm" style="max-width:200px"><option value="">All events</option><option value="call.initiated">call.initiated</option><option value="call.answered">call.answered</option><option value="call.hangup">call.hangup</option></select></div>
+    <div class="table-responsive"><table class="table table-hover align-middle text-body"><thead class="table-light-th"><tr><th>Timestamp</th><th>Event Type</th><th>Type</th><th>From</th><th>To</th><th>Call ID</th></tr></thead>
+    <tbody id="evrows" class="mono"><tr><td colspan="6" class="text-center text-muted py-4">Loading...</td></tr></tbody></table></div></div>` : ''}`;
+
+  const get = () => {
+    const o = { class: $('#fc').value, from: $('#ff').value, to: $('#ft').value, q: $('#fq').value, limit: $('#fl').value };
+    if (adm) o.customer = $('#fu').value; else if ($('#fu').value) o.q = $('#fu').value;   // customers: facility name searches the same field
+    return o;
+  };
+  const load = async () => {
+    try {
+      const [rows, st, rec, evs, ne] = await Promise.all([api('calls?' + qs(get())), api('stats'), api('calls?class=real&limit=5'), adm ? api('events?limit=100&' + qs({ type: $('#evt').value })) : [], adm ? api('calls?noelin=1&limit=200') : []]);
+      if (adm) {
+        const m = new Date(Date.now() - 30 * 864e5), recent = ne.filter(x => new Date(x.started_at) > m), callers = [...new Set(recent.map(x => (x.src_number || 'unknown') + ' (' + (x.customer || 'unknown caller') + ')'))];
+        $('#noelin').innerHTML = recent.length ? `<div class="p-3 mb-4 rounded" style="background:#3b0d0d;border:2px solid #ef4444"><div class="fw-bold text-danger fs-5">&#9888; ${recent.length} real 911 call${recent.length === 1 ? '' : 's'} with NO ELIN on file in the last 30 days${st.fee > 0 ? ' &mdash; about $' + (recent.length * st.fee).toLocaleString() + ' in charges' : ''}</div>
+          <div class="small mt-1">Callers: <span class="mono">${callers.map(E).join(', ')}</span>. Add the ELIN address for each number (or add the number to its customer if it is unknown) under Directory so the next call is matched.</div></div>` : '';
+      }
+      if (adm) $('#evrows').innerHTML = evs.length ? evs.map(v => `<tr class="${v.class === 'real' ? 'emergency-flash' : ''}"><td class="text-nowrap small fw-bold">${new Date(v.ts).toLocaleString()}</td>
+        <td><span class="badge ev-${v.event_type.split('.')[1]}">${E(v.event_type)}</span></td><td>${v.class === 'real' ? '<span class="badge-911">911</span>' : '<span class="badge-test">TEST</span>'}</td>
+        <td class="text-info">${E(v.src_number)}</td><td class="${v.class === 'real' ? 'text-danger fw-bold' : ''}">${E(v.dst_number)}</td>
+        <td class="text-muted small" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${E(v.call_id)}">${E(v.call_id)}</td></tr>`).join('')
+        : '<tr><td colspan="6" class="text-center text-muted py-4">No events yet.</td></tr>';
+      live(true);
+      $('#cnt').textContent = rows.length + ' shown';
+      if (adm) { $('#s1').textContent = st.total; $('#s2').textContent = st.live; $('#s3').textContent = st.real; $('#s4').textContent = rows.length; }
+      else { $('#s1').textContent = st.real; $('#s2').textContent = st.last30; $('#s3').textContent = st.dids; $('#s4').textContent = st.last_real ? new Date(st.last_real).toLocaleDateString() : 'None'; }
+      $('#rc').textContent = rec.length ? 'latest ' + rec.length : '';
+      $('#recent').innerHTML = rec.length ? rec.map(a => `<div class="d-flex flex-wrap align-items-center gap-3 py-2 border-bottom border-secondary-subtle">
+          <div class="text-danger fw-bold" style="min-width:60px">&#128680; ${E(a.dst_in || '911')}</div>
+          <div class="text-warning fw-bold" style="min-width:160px">${E(a.facility || a.customer || 'Unknown caller')}</div>
+          <div class="text-info mono small">${E(a.src_number)}</div>
+          <div class="text-muted small" style="max-width:420px">${addr(a)}</div>
+          <div class="text-muted small ms-auto">${new Date(a.started_at).toLocaleString()}</div></div>`).join('')
+        : '<span class="text-muted small">No real 911 calls on record.</span>';
+      $('#rows').innerHTML = rows.length ? rows.map(r => {
+        const real = r.class === 'real', ago = Date.now() - new Date(r.started_at);
+        const len = r.duration_s != null ? r.duration_s + 's' : (ago < 7200e3 ? '<span class="status-active">&#9679; live</span>' : '&ndash;');
+        const em = !real ? '<span class="text-muted small">test: none</span>' : r.notify_status === 'sent' ? '<span class="badge bg-success">sent</span>' : (r.notify_status || '').startsWith('sent;') ? `<span class="badge bg-warning text-dark" title="${E(r.notify_status)}">sent*</span>` : r.notify_status ? `<span class="badge bg-danger" title="${E(r.notify_status)}">failed</span>` : '<span class="badge bg-secondary">pending</span>';
+        return `<tr class="${real ? 'emergency-flash' : ''}"><td class="text-nowrap">${dt(r.started_at)}</td>
+          <td>${real ? '<span class="badge-911">911</span>' : `<span class="badge-test">TEST ${E(r.matched_pattern)}</span>`}</td>
+          ${adm ? `<td>${r.customer ? E(r.customer) : '<span class="unk">unknown</span>'}</td>` : ''}
+          <td>${r.facility ? `<span class="facility-badge">${E(r.facility)}</span>` : ''}${real && !r.elin_address1 ? ' <span class="badge bg-danger">NO ELIN</span>' : ''}</td>
+          <td class="text-info">${E(r.src_number)}</td><td class="${real ? 'text-danger fw-bold' : ''}">${E(r.dst_in)}</td>
+          <td class="small" style="max-width:300px;white-space:normal;font-family:inherit">${addr(r) || 'N/A'}</td><td>${len}</td>${adm ? `<td>${em}</td>` : ''}
+          <td class="text-muted small" style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${E(r.call_id)}">${E(r.call_id)}</td></tr>`;
+      }).join('') : `<tr><td colspan="10" class="text-center text-muted py-5">No calls match the current filters.</td></tr>`;
+    } catch (err) { live(false); if (err.message !== 'login') console.error(err); }
+  };
+  if (!adm) {
+    const say = (id, msg, bad) => { const m = $('#' + id); m.style.color = bad ? '#ef4444' : '#10b981'; m.textContent = msg; setTimeout(() => m.textContent = '', 5000); };
+    $('#n-acct-go').onclick = async () => { try { const r = await api('my/notify', { method: 'PUT', body: { notify_emails: $('#n-acct').value } }); $('#n-acct').value = r.notify_emails.join(', '); say('n-acct-m', '\u2713 Saved'); } catch (e) { say('n-acct-m', e.message, true); } };
+    $('#notif').onclick = async e => {
+      const b = e.target.closest('[data-save]'); if (!b) return; const id = b.dataset.save, inp = $('.n-did[data-id="' + id + '"]');
+      try { const r = await api('my/dids/' + id + '/emails', { method: 'PUT', body: { notify_emails: inp.value } }); inp.value = r.notify_emails.join(', '); say('n-m-' + id, '\u2713 Saved'); } catch (err) { say('n-m-' + id, err.message, true); }
+    };
+    $('#n-test').onclick = async () => { try { const r = await api('my/notify-test', { method: 'POST', body: {} }); say('n-test-m', r.status === 'sent' ? '\u2713 Test sent to ' + r.sent + ' address(es)' : 'Not sent: ' + r.status, r.status !== 'sent'); } catch (e) { say('n-test-m', e.message, true); } };
+  }
+  $$('#main select, #main input[type=date]').forEach(i => i.onchange = load);
+  $('#fq').oninput = () => { clearTimeout(window._d); window._d = setTimeout(load, 300); };
+  $('#ex').onclick = () => location = '/api/calls.xlsx?' + qs(get());
+  $('#ex2').onclick = () => location = '/api/calls.csv?' + qs(get());
+  load(); timer = setInterval(load, 5000);
+}
+
+// =====================================================================
+// DIRECTORY  (admin): customer account profiles + facility routes
+// =====================================================================
+async function dir() {
+  [customers, dids] = await Promise.all([api('customers'), api('dids')]);
+  const activeC = customers.filter(c => c.active);
+  $('#main').innerHTML = `
+  <div class="control-panel p-4 mb-4">
+    <div class="d-flex justify-content-between align-items-start mb-3 flex-wrap gap-3">
+      <div><h5 class="fw-bold mb-1">Customer Account Profiles</h5>
+        <p class="text-muted small mb-0">Each account can have a portal password. The customer signs in at this site's public address with the <b>account name</b> and that password, and sees only their own numbers and 911 calls.</p></div>
+      <div class="d-flex gap-2 align-items-center"><input id="new-cust" class="form-control form-control-sm" style="max-width:220px" placeholder="New account name..."><input id="new-contact" type="email" class="form-control form-control-sm" style="max-width:240px" placeholder="Contact email (required)" title="Required. Gets the NO ELIN alert and staff contact about 911 for this customer."><button class="btn btn-success btn-sm fw-bold px-3 text-nowrap" id="add-cust">+ Add</button></div>
+    </div>
+    <div class="d-flex align-items-center gap-2 mb-3"><input id="cust-q" type="search" class="form-control form-control-sm" style="max-width:480px" placeholder="Search customers: name, email, phone number, facility, address, notes..." value="${E(window.custQ || '')}"><span id="cust-count" class="text-muted small"></span></div>
+    <div class="d-flex flex-wrap gap-3" id="cust-cards">${customers.length ? customers.map(c => `
+      <div class="customer-card ${c.active ? '' : 'opacity-50'}" data-id="${c.id}" data-name="${E(c.name)}" data-s="${E([c.name, c.contact_email, (c.notify_emails || []).join(' '), (c.admin_emails || []).join(' '), c.notes, ...dids.filter(d => d.customer_id === c.id).flatMap(d => [d.did, d.facility, d.elin_address1, d.elin_address2, d.city, d.zip, d.notify_emails])].filter(Boolean).join(' ').toLowerCase())}">
+        <div class="d-flex justify-content-between align-items-start mb-2"><div>
+          <div class="text-warning fw-bold">${E(c.name)}${c.active ? '' : ' <span class="badge bg-secondary">inactive</span>'}</div>
+          <div class="text-muted" style="font-size:11px">${c.portal_users.length ? '&#128274; Portal login set' : '&#128275; No portal login'} &middot; ${c.did_count} number${c.did_count === 1 ? '' : 's'}</div></div>
+          <button class="remove-btn" data-act="${c.active ? 'off' : 'on'}" title="${c.active ? 'Deactivate (call history is kept)' : 'Reactivate'}">${c.active ? '&#10005;' : '&#8634;'}</button></div>
+        <div class="d-flex gap-2 mb-2"><input type="email" class="form-control form-control-sm ct ${c.contact_email ? '' : 'is-invalid'}" style="font-size:11px" placeholder="Contact email (REQUIRED) — gets the NO ELIN alert" title="Required. Always gets the NO ELIN MATCH alert, even if it is not on the notification list below." value="${E(c.contact_email || '')}"><button class="btn btn-outline-danger btn-sm" style="font-size:11px" data-act="ct">Save</button></div>
+        <div class="d-flex gap-2 mb-2"><input class="form-control form-control-sm em" style="font-size:11px" placeholder="Customer's alert emails — customer can see &amp; edit" title="The customer sees and can change this list. Do not put staff addresses here." value="${E((c.notify_emails || []).join(', '))}"><button class="btn btn-outline-primary btn-sm" style="font-size:11px" data-act="em">Save</button></div>
+        <div class="d-flex gap-2 mb-2"><input class="form-control form-control-sm ae" style="font-size:11px" placeholder="Staff addresses — HIDDEN from customer" title="Staff get their own separate email. The customer never sees these." value="${E((c.admin_emails || []).join(', '))}"><button class="btn btn-outline-warning btn-sm" style="font-size:11px" data-act="ae">Save</button></div>
+        <div class="d-flex gap-2 mb-2"><button class="btn btn-outline-info btn-sm flex-fill" style="font-size:11px" data-act="pv">Preview alert</button><button class="btn btn-outline-warning btn-sm flex-fill" style="font-size:11px" data-act="tst">Send test email</button></div>
+        <div class="d-flex gap-2 mb-2"><button class="btn btn-outline-danger btn-sm flex-fill" style="font-size:11px" data-act="pv" data-noelin="1">Preview NO ELIN alert</button><button class="btn btn-outline-danger btn-sm flex-fill" style="font-size:11px" data-act="tst" data-noelin="1">Send NO ELIN test</button></div>
+        <div class="d-flex gap-2"><input type="password" class="form-control form-control-sm pw" style="font-size:11px" placeholder="Set or update portal password (10+)" autocomplete="new-password"><button class="btn btn-outline-success btn-sm" style="font-size:11px;white-space:nowrap" data-act="pw">Save PW</button></div>
+        <div class="saved-msg mt-1"></div></div>`).join('') : '<span class="text-muted small">No customer accounts yet. Add one above, or import a customer list.</span>'}</div>
+  </div>
+
+  <div class="control-panel p-3 mb-4"><div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+    <button class="btn btn-success fw-bold px-3" id="add-fac">+ Add New Facility Route</button>
+    <div class="d-flex gap-2 flex-wrap">
+      <button class="btn btn-outline-primary fw-bold" id="open-imp">&#128229; Import Excel</button>
+      <a class="btn btn-outline-info fw-bold" href="/api/dids.xlsx">&#128228; Export Routes (Excel)</a>
+      <a class="btn btn-outline-info fw-bold" href="/api/customers.xlsx">&#128228; Export Customers (Excel)</a>
+      <a class="btn btn-outline-secondary" href="/api/dids.csv">CSV</a>
+    </div></div></div>
+
+  <div class="table-container p-4">
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-3"><h5 class="m-0 fw-bold">Active Facility Routes <span class="badge bg-dark border border-secondary text-secondary mono ms-2" id="dcount"></span></h5>
+      <input id="dsearch" class="form-control form-control-sm" style="max-width:340px" placeholder="Search customer, facility, phone, address, email..."></div>
+    <div class="table-responsive"><table class="table table-hover align-middle text-body"><thead class="table-light-th"><tr>
+      <th>Customer Profile</th><th>Facility Name</th><th>Phone Number</th><th>ELIN Address</th><th>Notification Targets</th><th class="text-end">Actions</th></tr></thead>
+      <tbody id="drows" class="mono"></tbody></table></div>
+  </div>`;
+
+  const drows = () => {
+    const s = $('#dsearch').value.toLowerCase().trim();
+    const list = dids.filter(d => !s || [d.customer, d.facility, d.did, d.elin_address1, d.elin_address2, d.city, d.state, d.zip, d.notify_emails, d.notes].join(' ').toLowerCase().includes(s));
+    $('#dcount').textContent = list.length + ' of ' + dids.length;
+    $('#drows').innerHTML = list.length ? list.map(d => `<tr><td class="text-warning">${E(d.customer)}</td><td>${E(d.facility)}</td><td class="text-info">${E(d.did)}</td>
+      <td class="small" style="white-space:normal;font-family:inherit">${addr(d)}</td><td class="small" style="white-space:normal">${E((d.notify_emails || '').split(';').join(', ')) || '<span class="text-muted">customer default</span>'}</td>
+      <td class="text-end text-nowrap"><button class="btn btn-sm btn-outline-primary" data-edit="${d.id}">Edit</button> <button class="btn btn-sm btn-outline-danger" data-del="${d.id}">Delete</button></td></tr>`).join('')
+      : '<tr><td colspan="6" class="text-center text-muted py-4">No facility routes. Add one or import an Excel file.</td></tr>';
+  };
+  $('#dsearch').oninput = drows; drows();
+
+  // ----- customer cards -----
+  const flash = (card, msg, bad) => { const m = card.querySelector('.saved-msg'); m.style.color = bad ? '#ef4444' : '#10b981'; m.textContent = msg; setTimeout(() => m.textContent = '', 3500); };
+  $('#add-cust').onclick = async () => { const n = $('#new-cust').value.trim(); if (!n) return; const ce = $('#new-contact').value.trim(); if (!ce) { $('#new-contact').focus(); return alert('A contact email is required for every customer.'); } try { await api('customers', { method: 'POST', body: { name: n, contact_email: ce } }); dir(); } catch (e) { alert(e.message); } };
+  const cq = () => { const q = $('#cust-q').value.trim().toLowerCase(), digitsQ = q.replace(/\D/g, ''); window.custQ = $('#cust-q').value; let n = 0, all = 0;
+    document.querySelectorAll('#cust-cards .customer-card').forEach(el => { all++; const s = el.dataset.s, hit = !q || q.split(/\s+/).every(w => s.includes(w)) || (digitsQ.length >= 4 && s.replace(/\D/g, '').includes(digitsQ)); el.classList.toggle('d-none', !hit); if (hit) n++; });
+    $('#cust-count').textContent = q ? n + ' of ' + all + ' shown' : all + ' customer' + (all === 1 ? '' : 's'); };
+  $('#cust-q').oninput = cq; cq();
+  $('#new-contact').onkeydown = $('#new-cust').onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); $('#add-cust').click(); } };
+  $('#cust-cards').onclick = async e => {
+    const b = e.target.closest('[data-act]'); if (!b) return; const card = b.closest('.customer-card'), id = card.dataset.id;
+    try {
+      if (b.dataset.act === 'ct') { await api('customers/' + id, { method: 'PATCH', body: { contact_email: card.querySelector('.ct').value } }); card.querySelector('.ct').classList.remove('is-invalid'); flash(card, '✓ Contact email saved'); }
+      else if (b.dataset.act === 'em') { await api('customers/' + id, { method: 'PATCH', body: { notify_emails: card.querySelector('.em').value } }); flash(card, '✓ Emails saved'); }
+      else if (b.dataset.act === 'ae') { await api('customers/' + id, { method: 'PATCH', body: { admin_emails: card.querySelector('.ae').value } }); flash(card, '\u2713 Internal copies saved'); }
+      else if (b.dataset.act === 'pv') {
+        const a = await api('customers/' + id + '/email-preview' + (b.dataset.noelin ? '?noelin=1' : ''));
+        $('#pv-meta').innerHTML = '<b>Subject:</b> ' + E(a.subject) + '<br><b>Email 1 — to the customer:</b> ' + (E(a.to.join(', ')) || '<i>nobody (no customer addresses)</i>') + '<br><b>Email 2 — separate, staff only:</b> ' + (E(a.staff.join(', ')) || '<i>none</i>');
+        $('#pv-frame').srcdoc = a.html; bootstrap.Modal.getOrCreateInstance($('#pvModal')).show();
+      } else if (b.dataset.act === 'tst') {
+        const a = await api('customers/' + id + '/email-preview' + (b.dataset.noelin ? '?noelin=1' : ''));
+        if (!a.to.length && !a.staff.length) return flash(card, 'No email addresses set for this customer yet', true);
+        if (!confirm('Send a clearly-marked SAMPLE alert for ' + card.dataset.name + '?\n\nEmail 1 (customer): ' + (a.to.join(', ') || '(none)') + '\nEmail 2 (staff, separate): ' + (a.staff.join(', ') || '(none)') + '\n\nNo emergency call is made.')) return;
+        const r = await api('customers/' + id + '/test-email', { method: 'POST', body: { noelin: !!b.dataset.noelin } });
+        const bad = [r.to.length ? r.status : null, r.staff.length ? r.staffStatus : null].filter(x => x && x !== 'sent'); flash(card, bad.length ? 'NOT sent: ' + bad.join(' / ') : '\u2713 Test sent — check the inbox(es)', bad.length > 0);
+      }
+      else if (b.dataset.act === 'pw') {
+        const pw = card.querySelector('.pw'); if (!pw.value) return flash(card, 'Enter a password first', true);
+        await api('customers/' + id + '/portal', { method: 'POST', body: { password: pw.value } }); pw.value = ''; flash(card, '✓ Saved. Login name: ' + card.dataset.name);
+      } else if (b.dataset.act === 'off') { if (confirm('Deactivate ' + card.dataset.name + '?\nTheir portal login stops working. Call history and numbers are kept.')) { await api('customers/' + id, { method: 'PATCH', body: { active: false } }); dir(); } }
+      else if (b.dataset.act === 'on') { await api('customers/' + id, { method: 'PATCH', body: { active: true } }); dir(); }
+    } catch (err) { flash(card, err.message, true); }
+  };
+
+  // ----- add / edit facility -----
+  const ent = bootstrap.Modal.getOrCreateInstance($('#entryModal'));
+  const fill = d => {
+    $('#entry-title').textContent = d ? 'Edit Facility Route' : 'Add Facility Route';
+    $('#m-cust').innerHTML = (d ? customers : activeC).map(c => `<option value="${c.id}">${E(c.name)}</option>`).join('');
+    $('#m-cust').value = d ? d.customer_id : ''; $('#m-did').readOnly = !!d;
+    $('#m-fac').value = d?.facility || ''; $('#m-did').value = d?.did || ''; $('#m-a1').value = d?.elin_address1 || ''; $('#m-a2').value = d?.elin_address2 || '';
+    $('#m-city').value = d?.city || ''; $('#m-st').value = d?.state || ''; $('#m-zip').value = d?.zip || '';
+    $('#m-em').value = (d?.notify_emails || '').split(';').join(', '); $('#m-notes').value = d?.notes || ''; $('#entry-err').classList.add('d-none'); ent.show();
+  };
+  $('#add-fac').onclick = () => { if (!activeC.length) return alert('Add a customer account first.'); fill(null); };
+  $('#drows').onclick = async e => {
+    const ed = e.target.closest('[data-edit]'), dl = e.target.closest('[data-del]');
+    if (ed) fill(dids.find(d => d.id == ed.dataset.edit));
+    if (dl) { const d = dids.find(x => x.id == dl.dataset.del); if (confirm('Delete ' + d.did + ' (' + (d.facility || d.customer) + ')?\nPast call records keep their history.')) { await api('dids/' + d.id, { method: 'DELETE' }); dir(); } }
+  };
+  $('#entry-form').onsubmit = async e => {
+    e.preventDefault();
+    try {
+      await api('dids', { method: 'POST', body: { did: $('#m-did').value, customer_id: $('#m-cust').value, facility: $('#m-fac').value, elin_address1: $('#m-a1').value, elin_address2: $('#m-a2').value,
+        city: $('#m-city').value, state: $('#m-st').value, zip: $('#m-zip').value, notify_emails: $('#m-em').value, notes: $('#m-notes').value } });
+      ent.hide(); dir();
+    } catch (err) { $('#entry-err').textContent = err.message; $('#entry-err').classList.remove('d-none'); }
+  };
+
+  // ----- import -----
+  const imp = bootstrap.Modal.getOrCreateInstance($('#importModal'));
+  const COLS = { dids: 'did, customer, facility, elin_address1, elin_address2, city, state, zip, notes, notify_emails', customers: 'name, contact_email (required), notify_emails (separate with ;), notes, active' };
+  const kind = () => $('#imp-kind').value;
+  const sync = () => { $('#imp-cols').innerHTML = 'Columns: <code>' + COLS[kind()] + '</code>'; $('#imp-create-wrap').classList.toggle('hide', kind() !== 'dids'); };
+  $('#imp-kind').onchange = sync;
+  $('#open-imp').onclick = () => { $('#imp-file').value = ''; $('#imp-go').disabled = true; $('#imp-result').classList.add('d-none'); sync(); imp.show(); };
+  $('#imp-file').onchange = () => $('#imp-go').disabled = !$('#imp-file').files.length;
+  $('#imp-template').onclick = () => {
+    const t = kind() === 'dids' ? COLS.dids.replace(/, /g, ',') + '\n9705550101,Example Hotel,Front Desk,1 Main St,Suite 100,Springfield,ST,00000,,manager@example.com\n'
+      : 'name,contact_email,notify_emails,notes,active\nExample Hotel,manager@example.com,safety@example.com;security@example.com,,true\n';
+    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([t], { type: 'text/csv' })); a.download = kind() + '-template.csv'; a.click();
+  };
+  $('#imp-go').onclick = async () => {
+    const out = $('#imp-result'); out.className = 'alert alert-info small'; out.textContent = 'Importing...';
+    try {
+      const r = await api((kind() === 'dids' ? 'dids/import' : 'customers/import') + (kind() === 'dids' && $('#imp-create').checked ? '?create=1' : ''), { method: 'POST', ...await fileBody($('#imp-file').files[0]) });
+      out.className = 'alert ' + (r.errors.length ? 'alert-warning' : 'alert-success') + ' small';
+      out.textContent = 'Imported ' + r.imported + ' row(s).' + (r.errors.length ? '\n\nProblems (' + r.errors.length + '):\n' + r.errors.slice(0, 25).join('\n') : '');
+      [customers, dids] = await Promise.all([api('customers'), api('dids')]); drows();
+    } catch (err) { out.className = 'alert alert-danger small'; out.textContent = err.message; }
+  };
+}
+
+// =====================================================================
+// LOGIN LOGS (admin)
+// =====================================================================
+async function logins() {
+  $('#main').innerHTML = `
+  <div class="row g-3 mb-4">${statCard('Total Attempts', 'l1', 'text-primary') + statCard('Successful', 'l2', 'text-success') + statCard('Failed', 'l3', 'text-danger') + statCard('Showing', 'l4', 'text-warning')}</div>
+  <div class="control-panel p-3 mb-4"><div class="row g-3 align-items-end">
+    <div class="col-12 col-md-5"><label class="form-label small text-secondary fw-bold">Search</label><input id="lq" class="form-control" placeholder="Account name or IP address..."></div>
+    <div class="col-12 col-sm-6 col-md-3"><label class="form-label small text-secondary fw-bold">Status</label><select id="ls" class="form-select"><option value="">All Attempts</option><option value="ok">Successful Only</option><option value="bad">Failed Only</option></select></div>
+    <div class="col-12 col-md-4 text-md-end"><button class="btn btn-outline-primary btn-sm" id="lr">&#8635; Refresh</button></div></div></div>
+  <div class="table-container p-4"><h5 class="fw-bold mb-3">Login Attempt History</h5>
+    <div class="table-responsive"><table class="table table-hover align-middle text-body"><thead class="table-light-th"><tr><th>Timestamp</th><th>Account</th><th>Type</th><th>Status</th><th>IP Address</th></tr></thead><tbody id="lrows" class="mono"></tbody></table></div></div>`;
+  let all = [];
+  const draw = () => {
+    const s = $('#lq').value.toLowerCase().trim(), st = $('#ls').value;
+    const list = all.filter(l => (!st || (st === 'ok') === l.success) && (!s || ((l.username || '') + ' ' + (l.ip || '')).toLowerCase().includes(s)));
+    $('#l1').textContent = all.length; $('#l2').textContent = all.filter(l => l.success).length; $('#l3').textContent = all.filter(l => !l.success).length; $('#l4').textContent = list.length;
+    $('#lrows').innerHTML = list.length ? list.map(l => `<tr><td class="text-nowrap small fw-bold">${new Date(l.ts).toLocaleString()}</td><td class="text-info">${E(l.username) || 'Unknown'}</td><td class="small">${E(l.role) || ''}</td>
+      <td><span class="badge ${l.success ? 'bg-success' : 'bg-danger'}">${l.success ? 'Success' : 'Failed'}</span></td><td class="text-muted small">${E(l.ip) || 'N/A'}</td></tr>`).join('')
+      : '<tr><td colspan="5" class="text-center text-muted py-5">No login attempts match the filters.</td></tr>';
+  };
+  const load = async () => { try { all = await api('login-logs'); live(true); draw(); } catch (e) { live(false); } };
+  $('#lq').oninput = draw; $('#ls').onchange = draw; $('#lr').onclick = load; load(); timer = setInterval(load, 30000);
+}
+
+// =====================================================================
+// NUMBERS & USERS (admin)
+// =====================================================================
+async function settings() {
+  const [p, users, ae] = await Promise.all([api('patterns'), api('users'), api('admin-emails')]); customers = await api('customers');
+  $('#main').innerHTML = `
+  <div class="control-panel p-4 mb-4"><h5 class="fw-bold mb-1">Numbers Captured</h5><p class="text-muted small">A call to one of these numbers is saved. <b>Real</b> numbers email the customer and admins; <b>test</b> numbers are only logged.</p>
+    <div class="table-responsive"><table class="table table-hover align-middle text-body"><thead class="table-light-th"><tr><th>Number</th><th>Type</th><th>Note</th><th></th></tr></thead><tbody class="mono">${p.map(x => `<tr><td>${E(x.pattern)}</td>
+      <td>${x.class === 'real' ? '<span class="badge-911">real 911 (emails)</span>' : '<span class="badge-test">test (logged only)</span>'}</td><td class="small" style="font-family:inherit">${E(x.note)}</td>
+      <td class="text-end"><button class="btn btn-sm btn-outline-danger" data-p="${E(x.pattern)}">Remove</button></td></tr>`).join('')}</tbody></table></div>
+    <div class="row g-2 mt-2"><div class="col-12 col-md-3"><input id="p_n" class="form-control" placeholder="Number"></div><div class="col-6 col-md-2"><select id="p_c" class="form-select"><option value="real">real</option><option value="test">test</option></select></div>
+      <div class="col-6 col-md-5"><input id="p_o" class="form-control" placeholder="Note"></div><div class="col-12 col-md-2"><button class="btn btn-success fw-bold w-100" id="p_go">Add</button></div></div></div>
+  <div class="control-panel p-4 mb-4" style="border-left:4px solid #f59e0b"><h5 class="fw-bold mb-1">Staff Alert Emails <span class="badge bg-warning text-dark ms-2">hidden from customers</span></h5>
+    <p class="text-muted small">These addresses get their <b>own separate email</b> for every real 911 alert and test-call alert for <b>all</b> customers. The customer's email never includes them, and customers never see this list. You can also set staff addresses for just one customer on the Directory page.</p>
+    <div class="d-flex gap-2 flex-wrap"><input id="ae-in" class="form-control" style="max-width:640px" placeholder="noc@example.com, oncall@example.com" value="${E(ae.emails.join(', '))}"><button class="btn btn-success fw-bold" id="ae-go">Save</button><span class="small align-self-center" id="ae-m"></span></div>
+    ${ae.from_env.length ? `<div class="text-muted small mt-2">Also set in the server file: ${E(ae.from_env.join(', '))} (change this in <code>.env</code> if needed)</div>` : ''}</div>
+  <div class="control-panel p-4 mb-4"><h5 class="fw-bold mb-1">Users</h5><p class="text-muted small">Admins and customer logins. Disabling a user stops their sign-in but keeps the account.</p>
+    <div class="table-responsive"><table class="table table-hover align-middle text-body"><thead class="table-light-th"><tr><th>Username</th><th>Role</th><th>Customer</th><th>Last Sign-in</th><th>Status</th><th class="text-end">Actions</th></tr></thead><tbody class="mono">${users.map(u => `<tr class="${u.active ? '' : 'opacity-50'}">
+      <td class="text-info">${E(u.username)}${u.id === me.id ? ' <span class="badge bg-secondary">you</span>' : ''}</td><td class="small" style="font-family:inherit">${u.role === 'admin' ? '<span class="badge bg-warning text-dark">admin</span>' : 'customer'}</td>
+      <td class="small" style="font-family:inherit">${E(u.customer) || '<span class="text-muted">all</span>'}</td><td class="small">${u.last_login ? new Date(u.last_login).toLocaleString() : '<span class="text-muted">never</span>'}</td>
+      <td>${u.active ? '<span class="badge bg-success">active</span>' : '<span class="badge bg-secondary">disabled</span>'}</td>
+      <td class="text-end text-nowrap"><button class="btn btn-sm btn-outline-primary" data-u="pw" data-id="${u.id}">Reset password</button> <button class="btn btn-sm btn-outline-secondary" data-u="rn" data-id="${u.id}">Rename</button>
+        <button class="btn btn-sm btn-outline-warning" data-u="${u.active ? 'off' : 'on'}" data-id="${u.id}">${u.active ? 'Disable' : 'Enable'}</button> <button class="btn btn-sm btn-outline-danger" data-u="del" data-id="${u.id}">Delete</button></td></tr>`).join('')}</tbody></table></div><div class="small text-danger" id="u_m"></div></div>
+  <div class="control-panel p-4"><h5 class="fw-bold mb-1">Add a User</h5><p class="text-muted small">Customer logins can also be set from the Directory page. Admin users can only sign in from the internal address.</p>
+    <div class="row g-2"><div class="col-12 col-md-3"><input id="n_u" class="form-control" placeholder="Username"></div><div class="col-12 col-md-3"><input id="n_p" type="password" class="form-control" placeholder="Password (10+ chars)" autocomplete="new-password"></div>
+      <div class="col-12 col-md-4"><select id="n_c" class="form-select"><option value="">Admin (all customers)</option>${customers.filter(c => c.active).map(c => `<option value="${c.id}">Customer: ${E(c.name)}</option>`).join('')}</select></div>
+      <div class="col-12 col-md-2"><button class="btn btn-success fw-bold w-100" id="n_go">Create</button></div></div><div class="small mt-2" id="n_m"></div></div>`;
+  $('#ae-go').onclick = async () => { const m = $('#ae-m'); try { const r = await api('admin-emails', { method: 'PUT', body: { emails: $('#ae-in').value } }); $('#ae-in').value = r.emails.join(', '); m.className = 'small align-self-center text-success'; m.textContent = '\u2713 Saved'; } catch (e) { m.className = 'small align-self-center text-danger'; m.textContent = e.message; } };
+  $('#p_go').onclick = async () => { try { await api('patterns', { method: 'POST', body: { pattern: $('#p_n').value, class: $('#p_c').value, note: $('#p_o').value } }); settings(); } catch (e) { alert(e.message); } };
+  $('#main').onclick = async e => {
+    const x = e.target.dataset && e.target.dataset.p; if (x && confirm('Stop capturing ' + x + '?')) { await api('patterns/' + x, { method: 'DELETE' }); settings(); }
+    const a = e.target.dataset && e.target.dataset.u; if (!a) return; const u = users.find(r => r.id == e.target.dataset.id), m = $('#u_m'); m.textContent = '';
+    try {
+      if (a === 'pw') { const pw = prompt('New password for ' + u.username + ' (10+ characters):'); if (!pw) return; await api('users/' + u.id, { method: 'PATCH', body: { password: pw } }); m.className = 'small text-success'; m.textContent = 'Password changed for ' + u.username; return; }
+      if (a === 'rn') { const n = prompt('New username for ' + u.username + ':', u.username); if (!n || n === u.username) return; await api('users/' + u.id, { method: 'PATCH', body: { username: n } }); }
+      if (a === 'off' || a === 'on') await api('users/' + u.id, { method: 'PATCH', body: { active: a === 'on' } });
+      if (a === 'del') { if (!confirm('Delete user ' + u.username + '? This cannot be undone.')) return; await api('users/' + u.id, { method: 'DELETE' }); }
+      settings();
+    } catch (err) { m.className = 'small text-danger'; m.textContent = err.message; }
+  };
+  $('#n_go').onclick = async () => {
+    const m = $('#n_m');
+    try { await api('users', { method: 'POST', body: { username: $('#n_u').value, password: $('#n_p').value, customer_id: $('#n_c').value || null } }); m.className = 'small mt-2 text-success'; m.textContent = 'User created.'; $('#n_p').value = ''; setTimeout(settings, 600); }
+    catch (err) { m.className = 'small mt-2 text-danger'; m.textContent = err.message; }
+  };
+}
+init();
+</script>
+</body>
+</html>

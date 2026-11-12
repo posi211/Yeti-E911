@@ -1,0 +1,7 @@
+node_modules/
+.env
+*.log
+*.sql.gz
+*.tar
+*.tgz
+.DS_Store
