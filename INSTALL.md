@@ -20,7 +20,7 @@ npm install -g pm2
 ## 3. Code
 
 ```
-git clone <this repository> /opt/yeti-e911
+git clone https://github.com/posi211/Yeti-E911.git /opt/yeti-e911
 cd /opt/yeti-e911 && npm install --omit=dev
 ```
 

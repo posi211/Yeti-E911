@@ -45,7 +45,7 @@ Tested against the Yeti admin API and the `cdr.cdr` CDR table of the Yeti Switch
 See **[INSTALL.md](INSTALL.md)** for the full guide. In short:
 
 ```
-git clone <this repository> /opt/yeti-e911 && cd /opt/yeti-e911
+git clone https://github.com/posi211/Yeti-E911.git /opt/yeti-e911 && cd /opt/yeti-e911
 npm install --omit=dev
 cp .env.example .env && chmod 600 .env        # fill it in
 # create the database and load schema.sql (see INSTALL.md)
