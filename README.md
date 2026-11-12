@@ -4,6 +4,10 @@
 
 Yeti-E911 watches your Yeti for calls to 911 (and the 933 test number), records each one, looks up the caller's number in your customer ELIN list, and emails the customer and your staff the facility and dispatchable address. A real 911 call from a number with no address on file raises a separate, urgent alert.
 
+![Yeti-E911 dashboard showing a NO ELIN banner, recent emergency alerts and the 911 call stream](docs/screenshots/dashboard.png)
+
+*Demo data only: the names, numbers and addresses are fictional.*
+
 > **Important: read before relying on it.**
 > Yeti-E911 only **watches and alerts**. It does **not** route 911 calls and is **not** a certified E911 service or a substitute for one. Your Yeti must already route 911 to an emergency carrier, and you are responsible for your carrier, PSAP and regulatory obligations. Alerts depend on your Yeti, network, database and email provider all working. Test with your carrier before depending on it. It is provided "as is", without warranty (see [LICENSE](LICENSE)).
 
@@ -17,6 +21,13 @@ Yeti-E911 watches your Yeti for calls to 911 (and the 933 test number), records 
 - **Customer portal.** Customers sign in to see only their own numbers and calls, and manage their own notification emails.
 - **Admin separation.** Admin accounts can sign in only through the internal address of your reverse proxy, not from the internet.
 - **Admin tools.** User management, a login log, preview and test-send for alerts, a clock, and configurable call patterns.
+
+## Screenshots
+
+| | |
+|---|---|
+| **Directory**: customer profiles with search, plus facility routes and ELIN addresses | **NO ELIN MATCH alert email**: the urgent customer copy |
+| <img src="docs/screenshots/directory.png" alt="Directory"> | <img src="docs/screenshots/alert-no-elin.png" alt="NO ELIN MATCH alert email"> |
 
 ## How it works
 
