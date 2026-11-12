@@ -1,4 +1,6 @@
 'use strict';
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 ABSi Corp
 // Watches the Yeti two ways and writes emergency calls to the e911 database:
 //   1. LIVE: polls yeti-web active calls every few seconds -> email goes out while the call is up.
 //   2. CDR : every minute reads the CDR DB for finished calls -> permanent record, catches anything live missed.

@@ -1,4 +1,6 @@
 'use strict';
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 ABSi Corp
 const { Pool } = require('pg');
 const crypto = require('crypto');
 

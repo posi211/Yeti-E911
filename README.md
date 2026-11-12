@@ -89,4 +89,4 @@ npm run test:all    # also needs a scratch PostgreSQL, see CONTRIBUTING.md
 
 ## License
 
-Apache License 2.0. See [LICENSE](LICENSE) and [NOTICE](NOTICE).
+Copyright 2026 ABSi Corp. Licensed under the Apache License 2.0. See [LICENSE](LICENSE) and [NOTICE](NOTICE).

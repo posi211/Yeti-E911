@@ -1,4 +1,6 @@
 'use strict';
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2026 ABSi Corp
 // node create-user.js <username> <password> [customer_id]    (no customer_id = admin)
 const L = require('./lib');
 const [u, p, c] = process.argv.slice(2);
